@@ -1,0 +1,29 @@
+import { useState } from "react";
+import { toast } from "sonner";
+
+export const usePreviewImage = () => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+          setImageUrl(reader.result as string);
+        };
+
+        reader.readAsDataURL(file);
+      } else {
+        toast.error("Invalid file type. Please upload an image.");
+        setImageUrl(null);
+      }
+    } else {
+      setImageUrl(null);
+    }
+  };
+
+  return { imageUrl, setImageUrl, handleImageChange };
+};
