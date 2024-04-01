@@ -1,9 +1,10 @@
+import { cn } from "@/lib/utils";
+import { useConversationStore } from "@/store/useConversationStore";
 import { Send } from "lucide-react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useConversationStore } from "@/store/useConversationStore";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export const MessageInput = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -54,7 +55,7 @@ export const MessageInput = () => {
       onSubmit={handleSendMessage}
     >
       <Input
-        className="w-full py-3 pr-16"
+        className={cn("w-full py-3 pr-16")}
         placeholder="Type a message"
         value={messageInput}
         onChange={(e) => setMessageInput(e.target.value)}

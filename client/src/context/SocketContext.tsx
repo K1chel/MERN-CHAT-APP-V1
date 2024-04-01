@@ -25,9 +25,14 @@ export const SocketContextProvider = ({
   const [onlineUsers, setOnlineUsers] = useState([]);
   const { user } = useContext(AuthContext);
 
+  const CONNECTION_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://mern-chat-app-v1.onrender.com"
+      : "http://localhost:5000";
+
   useEffect(() => {
     if (user) {
-      const newSocket = io("https://mern-chat-app-v1.onrender.com", {
+      const newSocket = io(CONNECTION_URL, {
         query: {
           userId: user._id,
         },

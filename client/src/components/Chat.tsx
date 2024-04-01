@@ -1,30 +1,34 @@
+import { cn } from "@/lib/utils";
 import { useConversationStore } from "@/store/useConversationStore";
 import { MessageSquareOff } from "lucide-react";
+import { useEffect } from "react";
 import { ChatHeader } from "./ChatHeader";
 import { MessageInput } from "./MessageInput";
 import { Messages } from "./Messages";
 import { MobileSidebar } from "./MobileSidebar";
-import { useEffect } from "react";
 
 export const Chat = () => {
   const { selectedConversation, setSelectedConversation } =
     useConversationStore();
+  const isIphone = navigator.userAgent.includes("iPhone");
 
   useEffect(() => {
     return () => setSelectedConversation(null);
   }, [setSelectedConversation]);
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full relative">
       {selectedConversation ? (
         <div className="flex flex-col h-full">
           <ChatHeader />
-          <div className="flex flex-1 overflow-x-hidden overflow-y-auto">
+          <div className="flex flex-1 overflow-x-hidden">
             <div className="flex flex-col gap-y-3 w-full">
               <Messages />
             </div>
           </div>
-          <MessageInput />
+          <div className={cn("", isIphone && "mb-20")}>
+            <MessageInput />
+          </div>
         </div>
       ) : (
         <div>
