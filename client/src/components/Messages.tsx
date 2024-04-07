@@ -18,7 +18,7 @@ export const Messages = () => {
   if (isLoading) return null;
 
   return (
-    <div className="h-full w-full p-4 pb-6 relative">
+    <div className="h-full w-full p-4 relative space-y-3">
       {messages.length === 0 && (
         <div className="flex items-center justify-center mt-20 flex-col gap-y-1">
           <h4 className="text-xl font-bold">No messages yet.</h4>

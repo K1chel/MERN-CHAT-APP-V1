@@ -1,7 +1,8 @@
+import { usePreviewImage } from "@/hooks/usePreviewImage";
 import { cn } from "@/lib/utils";
 import { useConversationStore } from "@/store/useConversationStore";
-import { Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Image, Send, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -9,19 +10,23 @@ import { Input } from "./ui/input";
 export const MessageInput = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [messageInput, setMessageInput] = useState<string>("");
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   const { selectedConversation, messages, setMessages } =
     useConversationStore();
+  const { handleImageChange, imageUrl, setImageUrl } = usePreviewImage();
 
   useEffect(() => {
     setMessageInput("");
-  }, [selectedConversation]);
+    setImageUrl(null);
+  }, [selectedConversation, setImageUrl]);
 
-  const disabled = messageInput.trim().length === 0 || isLoading;
+  const disabled = messageInput.trim().length === 0 && !imageUrl;
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!messageInput) return;
+    if (disabled) return;
 
     setIsLoading(true);
     try {
@@ -32,7 +37,7 @@ export const MessageInput = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ message: messageInput }),
+          body: JSON.stringify({ message: messageInput, imageId: imageUrl }),
         }
       );
       const data = await res.json();
@@ -42,6 +47,7 @@ export const MessageInput = () => {
 
       setMessages([...messages, data]);
       setMessageInput("");
+      setImageUrl(null);
     } catch (error) {
       toast.error("Failed to send message");
     } finally {
@@ -51,22 +57,49 @@ export const MessageInput = () => {
 
   return (
     <form
-      className="w-full px-5 py-3 relative z-0"
+      className="w-full px-5 py-3 relative z-0 flex items-center gap-x-3"
       onSubmit={handleSendMessage}
     >
+      <div className="relative">
+        <Button
+          size="icon"
+          className=""
+          variant="outline"
+          disabled={isLoading}
+          onClick={() => imageInputRef.current?.click()}
+        >
+          <Image className="w-5 h-5" />
+        </Button>
+        <input
+          hidden
+          type="file"
+          ref={imageInputRef}
+          onChange={handleImageChange}
+        />
+        {imageUrl && (
+          <Button
+            variant="destructive"
+            className="absolute -right-2 -top-2 p-1  rounded-full h-5 w-5"
+            onClick={() => setImageUrl(null)}
+            disabled={isLoading}
+            type="button"
+          >
+            <X className="w-3 h-3" />
+          </Button>
+        )}
+      </div>
       <Input
         className={cn("w-full py-3 pr-16")}
         placeholder="Type a message"
         value={messageInput}
         onChange={(e) => setMessageInput(e.target.value)}
       />
-      <div className="absolute top-0 right-0 w-20 h-full flex items-center justify-center">
+      <div>
         <Button
           size="icon"
           type="submit"
           variant="outline"
-          className="rounded-l-none"
-          disabled={disabled}
+          disabled={disabled || isLoading}
         >
           <Send className="w-5 h-5" />
         </Button>

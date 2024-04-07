@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import { v2 as cloudinary } from "cloudinary";
 import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const getMessages = async (req, res) => {
@@ -27,6 +28,7 @@ export const getMessages = async (req, res) => {
 export const sendMessage = async (req, res) => {
   try {
     const { message } = req.body;
+    let { imageId } = req.body;
     const { id } = req.params; // receiverId
     const senderId = req.user._id;
 
@@ -47,11 +49,15 @@ export const sendMessage = async (req, res) => {
       });
     }
 
-    // TODO: do stuff it there is an image
+    if (imageId) {
+      const uploadedImage = await cloudinary.uploader.upload(imageId);
+      imageId = uploadedImage.secure_url;
+    }
 
     const newMessage = new Message({
       senderId,
       receiverId: id,
+      imageId,
       message,
     });
 
