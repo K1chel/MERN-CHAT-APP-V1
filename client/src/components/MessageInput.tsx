@@ -25,6 +25,7 @@ export const MessageInput = () => {
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    e.stopPropagation();
 
     if (disabled) return;
 
@@ -66,6 +67,7 @@ export const MessageInput = () => {
           className=""
           variant="outline"
           disabled={isLoading}
+          type="button"
           onClick={() => imageInputRef.current?.click()}
         >
           <Image className="w-5 h-5" />
