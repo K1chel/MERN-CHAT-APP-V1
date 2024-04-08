@@ -1,6 +1,8 @@
+import { useContext } from "react";
+import ModalImage from "react-modal-image";
+
 import { AuthContext } from "@/context/AuthContext";
 import { IMessage } from "@/types";
-import { useContext } from "react";
 import { UserAvatar } from "./UserAvatar";
 import { useConversationStore } from "@/store/useConversationStore";
 import { cn } from "@/lib/utils";
@@ -37,9 +39,10 @@ export const Message = ({ message }: Props) => {
         )}
         {imageId && (
           <div className={cn("")}>
-            <img
-              src={imageId}
-              alt={"Message image"}
+            <ModalImage
+              large={imageId}
+              small={imageId}
+              hideZoom
               className={cn(
                 "w-50 h-50 rounded object-cover",
                 conversationMessage && "rounded-t-none"
