@@ -38,13 +38,13 @@ export const Message = ({ message }: Props) => {
           <p className="px-2 pt-1">{conversationMessage}</p>
         )}
         {imageId && (
-          <div className={cn("")}>
+          <div>
             <ModalImage
               large={imageId}
               small={imageId}
               hideZoom
               className={cn(
-                "w-50 h-50 rounded object-cover",
+                "w-64 h-56 rounded object-cover",
                 conversationMessage && "rounded-t-none"
               )}
             />

@@ -1,9 +1,10 @@
 import { usePreviewImage } from "@/hooks/usePreviewImage";
 import { cn } from "@/lib/utils";
 import { useConversationStore } from "@/store/useConversationStore";
-import { Image, Send, X } from "lucide-react";
+import { Send, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Uploadmodal } from "./Uploadmodal";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
@@ -14,7 +15,14 @@ export const MessageInput = () => {
 
   const { selectedConversation, messages, setMessages } =
     useConversationStore();
-  const { handleImageChange, imageUrl, setImageUrl } = usePreviewImage();
+  const {
+    handleImageChange,
+    imageUrl,
+    setImageUrl,
+    isUploading,
+    handleDragOver,
+    handleDrop,
+  } = usePreviewImage();
 
   useEffect(() => {
     setMessageInput("");
@@ -62,21 +70,15 @@ export const MessageInput = () => {
       onSubmit={handleSendMessage}
     >
       <div className="relative">
-        <Button
-          size="icon"
-          className=""
-          variant="outline"
-          disabled={isLoading}
-          type="button"
-          onClick={() => imageInputRef.current?.click()}
-        >
-          <Image className="w-5 h-5" />
-        </Button>
-        <input
-          hidden
-          type="file"
-          ref={imageInputRef}
-          onChange={handleImageChange}
+        <Uploadmodal
+          imageUrl={imageUrl}
+          setImageUrl={setImageUrl}
+          handleImageChange={handleImageChange}
+          imageInputRef={imageInputRef}
+          isLoading={isLoading}
+          isUploading={isUploading}
+          handleDragOver={handleDragOver}
+          handleDrop={handleDrop}
         />
         {imageUrl && (
           <Button
@@ -95,6 +97,7 @@ export const MessageInput = () => {
         placeholder="Type a message"
         value={messageInput}
         onChange={(e) => setMessageInput(e.target.value)}
+        disabled={isLoading}
       />
       <div>
         <Button
